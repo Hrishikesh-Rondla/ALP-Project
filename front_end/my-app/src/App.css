@@ -1,0 +1,90 @@
+/* src/App.css */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Gradients */
+.bg-gradient-purple-pink {
+  background: linear-gradient(to right, #a855f7, #ec4899);
+}
+
+.bg-gradient-green-blue {
+  background: linear-gradient(to right, #22c55e, #3b82f6);
+}
+
+.bg-gradient-yellow-orange {
+  background: linear-gradient(to right, #f59e0b, #f97316);
+}
+
+.bg-gradient-blue-indigo {
+  background: linear-gradient(to right, #3b82f6, #6366f1);
+}
+
+.bg-gradient-green-light {
+  background: linear-gradient(to right, #86efac, #a7f3d0);
+}
+
+.bg-gradient-yellow-light {
+  background: linear-gradient(to right, #fde047, #fed7aa);
+}
+
+.bg-gradient-red-light {
+  background: linear-gradient(to right, #fca5a5, #fecaca);
+}
+
+/* Page Backgrounds */
+.bg-gradient-page-login {
+  background: linear-gradient(to bottom right, #c084fc, #f472b6, #60a5fa);
+}
+
+.bg-gradient-page-signup {
+  background: linear-gradient(to bottom right, #4ade80, #60a5fa, #c084fc);
+}
+
+.bg-gradient-page-dashboard {
+  background: linear-gradient(to bottom right, #fcd34d, #fdba74, #f87171);
+}
+
+.bg-gradient-page-quiz {
+  background: linear-gradient(to bottom right, #93c5fd, #c4b5fd, #f9a8d4);
+}
+
+.bg-gradient-page-therapist {
+  background: linear-gradient(to bottom right, #e0f2fe, #eef2ff);
+}
+
+/* Subtle Background Colors */
+.bg-light-red {
+  background-color: #fef2f2;
+}
+
+.bg-light-yellow {
+  background-color: #fefce8;
+}
+
+.bg-light-green {
+  background-color: #f0fdf4;
+}
+
+/* Effects and Helpers */
+.hover-scale {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.icon-circle {
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+}
