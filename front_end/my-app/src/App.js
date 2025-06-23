@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-
-// Data
 import { quizData } from './data/quizData';
 import { studentsData } from './data/studentsData';
 import { therapistCredentials } from './data/therapistCredentials';
-
-// Components
 import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import Dashboard from './components/Dashboard';
@@ -18,36 +14,48 @@ const App = () => {
   const [currentQuiz, setCurrentQuiz] = useState(null);
   const [score, setScore] = useState(0);
   const [hearts, setHearts] = useState(3);
+  const [isEvaluated, setIsEvaluated] = useState(false); // New state for adaptive flow
   const [studentPerformance, setStudentPerformance] = useState({
-    easy: { correct: 0, total: 0, scores: [] },
-    medium: { correct: 0, total: 0, scores: [] },
-    hard: { correct: 0, total: 0, scores: [] }
+    easy: { correct: 0, total: 0 },
+    medium: { correct: 0, total: 0 },
+    hard: { correct: 0, total: 0 }
   });
 
-  const handleLogin = (userData, page) => {
-    setUser(userData);
-    setCurrentPage(page);
+  const handleLogin = (credentials, page) => {
+    if (credentials.type === 'student') {
+      const student = studentsData.find(s => s.username.toLowerCase() === credentials.username.toLowerCase() && s.password === credentials.password);
+      if (student) {
+        setUser({ name: student.name, type: "student" });
+        setCurrentPage('dashboard');
+      } else {
+        alert('Invalid student name or password!');
+      }
+    } else { // Therapist login
+      setUser(credentials);
+      setCurrentPage(page);
+    }
   };
 
   const handleLogout = () => {
     setUser(null);
     setCurrentPage('login');
-    // Reset student progress for a new session
     setScore(0);
     setHearts(3);
-    setStudentPerformance({
-      easy: { correct: 0, total: 0, scores: [] },
-      medium: { correct: 0, total: 0, scores: [] },
-      hard: { correct: 0, total: 0, scores: [] }
-    });
+    setIsEvaluated(false); // Reset evaluation status on logout
+    setStudentPerformance({ easy: { correct: 0, total: 0 }, medium: { correct: 0, total: 0 }, hard: { correct: 0, total: 0 } });
   };
 
   const handleStartQuiz = (level) => {
+    setHearts(3); // Reset hearts for every new quiz attempt
     setCurrentQuiz(level);
     setCurrentPage('quiz');
   };
 
   const handleQuizEnd = () => {
+    // If the quiz just taken was the medium evaluation, mark as evaluated
+    if (currentQuiz === 'medium') {
+      setIsEvaluated(true);
+    }
     setCurrentPage('dashboard');
     setCurrentQuiz(null);
   };
@@ -61,7 +69,7 @@ const App = () => {
         const points = quizLevel === 'easy' ? 10 : quizLevel === 'medium' ? 20 : 30;
         setScore(s => s + points);
       } else {
-        setHearts(h => h - 1);
+        setHearts(h => Math.max(0, h - 1)); // Prevent hearts from going below 0
       }
       return newPerf;
     });
@@ -79,6 +87,7 @@ const App = () => {
           studentPerformance={studentPerformance}
           onStartQuiz={handleStartQuiz}
           onLogout={handleLogout}
+          isEvaluated={isEvaluated}
         />;
       case 'quiz':
         return <QuizPage
@@ -90,18 +99,10 @@ const App = () => {
           onQuizEnd={handleQuizEnd}
         />;
       case 'therapist-dashboard':
-        return <TherapistDashboard
-          user={user}
-          studentsData={studentsData}
-          onLogout={handleLogout}
-        />;
+        return <TherapistDashboard user={user} studentsData={studentsData} onLogout={handleLogout} />;
       case 'login':
       default:
-        return <LoginPage
-          onLogin={handleLogin}
-          setCurrentPage={setCurrentPage}
-          therapistCredentials={therapistCredentials}
-        />;
+        return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} therapistCredentials={therapistCredentials} />;
     }
   };
 
