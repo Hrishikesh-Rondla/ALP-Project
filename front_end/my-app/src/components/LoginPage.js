@@ -1,24 +1,37 @@
 import React, { useState } from 'react';
 import { Book, User, Lock } from 'lucide-react';
+import api from '../api'; // Import the centralized API handler
 
-const LoginPage = ({ onLogin, setCurrentPage, therapistCredentials }) => {
+const LoginPage = ({ onLogin, setCurrentPage }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loginType, setLoginType] = useState('student');
 
-    const handleLogin = () => {
-        if (loginType === 'therapist') {
-            if (username === therapistCredentials.username && password === therapistCredentials.password) {
-                onLogin({ name: "Dr. Sarah Wilson", type: "therapist" }, 'therapist-dashboard');
-            } else {
-                alert('Invalid therapist credentials!');
-            }
-        } else { // Student Login
-            if (username.trim() && password.trim()) {
-                onLogin({ name: username, username, password, type: "student" }, 'dashboard');
-            } else {
-                alert('Please enter your name and password.');
-            }
+    const handleLogin = async (e) => {
+        // Prevent the form from refreshing the page
+        e.preventDefault();
+
+        if (!username.trim() || !password.trim()) {
+            alert('Please enter both username and password.');
+            return;
+        }
+
+        try {
+            // Call the backend API using our centralized handler
+            const res = await api.post('/auth/login', {
+                username,
+                password,
+                loginType
+            });
+
+            // On success, pass the response data (token and user object) up to App.js
+            onLogin(res.data);
+
+        } catch (err) {
+            // If the API returns an error, display it to the user
+            const errorMessage = err.response?.data?.msg || "Login failed. Please check your credentials and try again.";
+            alert(errorMessage);
+            console.error("Login failed:", err);
         }
     };
 
@@ -37,20 +50,16 @@ const LoginPage = ({ onLogin, setCurrentPage, therapistCredentials }) => {
                         <button onClick={() => setLoginType('therapist')} className={`nav-link rounded-pill fw-medium ${loginType === 'therapist' ? 'active bg-primary' : 'text-dark'}`}>Therapist</button>
                     </div>
 
-                    <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+                    <form onSubmit={handleLogin}>
                         <div className="mb-3">
-                            <label className="form-label fw-medium"><User className="d-inline me-2" size={20} />{loginType === 'therapist' ? 'Username' : 'Your Name'}</label>
-                            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control form-control-lg" placeholder={loginType === 'therapist' ? 'Enter username' : 'e.g., Alex'} required />
+                            <label className="form-label fw-medium"><User className="d-inline me-2" size={20} />{loginType === 'therapist' ? 'Username' : 'Your Username'}</label>
+                            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control form-control-lg" placeholder="Enter username" required />
                         </div>
 
                         <div className="mb-3">
                             <label className="form-label fw-medium"><Lock className="d-inline me-2" size={20} />Password</label>
                             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control form-control-lg" placeholder="Enter password" required />
                         </div>
-
-                        {loginType === 'therapist' && (
-                            <div className="alert alert-info small"><strong>Demo:</strong> therapist123 / secure2024</div>
-                        )}
 
                         <button type="submit" className="btn btn-primary btn-lg w-100 fw-bold hover-scale mt-3">{loginType === 'therapist' ? 'Access Dashboard' : "Let's Play!"}</button>
                     </form>
