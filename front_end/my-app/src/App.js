@@ -1,206 +1,13 @@
-// import React, { useState } from 'react';
-// import { quizData } from './data/quizData';
-// import { studentsData } from './data/studentsData';
-// import { therapistCredentials } from './data/therapistCredentials';
-// import LoginPage from './components/LoginPage';
-// import SignupPage from './components/SignupPage';
-// import Dashboard from './components/Dashboard';
-// import QuizPage from './components/QuizPage';
-// import TherapistDashboard from './components/TherapistDashboard';
-
-// const App = () => {
-//   const [currentPage, setCurrentPage] = useState('login');
-//   const [user, setUser] = useState(null);
-//   const [currentQuiz, setCurrentQuiz] = useState(null);
-//   const [score, setScore] = useState(0);
-//   const [hearts, setHearts] = useState(3);
-//   const [isEvaluated, setIsEvaluated] = useState(false); // New state for adaptive flow
-//   const [studentPerformance, setStudentPerformance] = useState({
-//     easy: { correct: 0, total: 0 },
-//     medium: { correct: 0, total: 0 },
-//     hard: { correct: 0, total: 0 }
-//   });
-
-//   const handleLogin = (credentials, page) => {
-//     if (credentials.type === 'student') {
-//       const student = studentsData.find(s => s.username.toLowerCase() === credentials.username.toLowerCase() && s.password === credentials.password);
-//       if (student) {
-//         setUser({ name: student.name, type: "student" });
-//         setCurrentPage('dashboard');
-//       } else {
-//         alert('Invalid student name or password!');
-//       }
-//     } else { // Therapist login
-//       setUser(credentials);
-//       setCurrentPage(page);
-//     }
-//   };
-
-//   const handleLogout = () => {
-//     setUser(null);
-//     setCurrentPage('login');
-//     setScore(0);
-//     setHearts(3);
-//     setIsEvaluated(false); // Reset evaluation status on logout
-//     setStudentPerformance({ easy: { correct: 0, total: 0 }, medium: { correct: 0, total: 0 }, hard: { correct: 0, total: 0 } });
-//   };
-
-//   const handleStartQuiz = (level) => {
-//     setHearts(3); // Reset hearts for every new quiz attempt
-//     setCurrentQuiz(level);
-//     setCurrentPage('quiz');
-//   };
-
-//   const handleQuizEnd = () => {
-//     // If the quiz just taken was the medium evaluation, mark as evaluated
-//     if (currentQuiz === 'medium') {
-//       setIsEvaluated(true);
-//     }
-//     setCurrentPage('dashboard');
-//     setCurrentQuiz(null);
-//   };
-
-//   const handleAnswer = (isCorrect, quizLevel) => {
-//     setStudentPerformance(prev => {
-//       const newPerf = { ...prev };
-//       newPerf[quizLevel].total += 1;
-//       if (isCorrect) {
-//         newPerf[quizLevel].correct += 1;
-//         const points = quizLevel === 'easy' ? 10 : quizLevel === 'medium' ? 20 : 30;
-//         setScore(s => s + points);
-//       } else {
-//         setHearts(h => Math.max(0, h - 1)); // Prevent hearts from going below 0
-//       }
-//       return newPerf;
-//     });
-//   };
-
-//   const renderPage = () => {
-//     switch (currentPage) {
-//       case 'signup':
-//         return <SignupPage setCurrentPage={setCurrentPage} />;
-//       case 'dashboard':
-//         return <Dashboard
-//           user={user}
-//           score={score}
-//           hearts={hearts}
-//           studentPerformance={studentPerformance}
-//           onStartQuiz={handleStartQuiz}
-//           onLogout={handleLogout}
-//           isEvaluated={isEvaluated}
-//         />;
-//       case 'quiz':
-//         return <QuizPage
-//           quizData={quizData}
-//           currentQuiz={currentQuiz}
-//           score={score}
-//           hearts={hearts}
-//           onAnswer={handleAnswer}
-//           onQuizEnd={handleQuizEnd}
-//         />;
-//       case 'therapist-dashboard':
-//         return <TherapistDashboard user={user} studentsData={studentsData} onLogout={handleLogout} />;
-//       case 'login':
-//       default:
-//         return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} therapistCredentials={therapistCredentials} />;
-//     }
-//   };
-
-//   return <>{renderPage()}</>;
-// };
-
-// export default App;
-// src/App.js
-
-// import React, { useState, useEffect } from 'react';
-// // Remove ALL data imports: quizData, studentsData, therapistCredentials
-// import LoginPage from './components/LoginPage';
-// import SignupPage from './components/SignupPage';
-// import Dashboard from './components/Dashboard';
-// import QuizPage from './components/QuizPage';
-// import TherapistDashboard from './components/TherapistDashboard';
-
-// const App = () => {
-//   const [currentPage, setCurrentPage] = useState('login'); // Controls which page component to show
-//   const [user, setUser] = useState(null); // Holds the logged-in user's data
-  
-//   // This effect checks if the user is already logged in when the app first loads
-//   useEffect(() => {
-//     const storedUser = localStorage.getItem('user');
-//     const token = localStorage.getItem('token');
-    
-//     if (token && storedUser) {
-//       const parsedUser = JSON.parse(storedUser);
-//       setUser(parsedUser);
-//       setCurrentPage(parsedUser.role === 'therapist' ? 'therapist-dashboard' : 'dashboard');
-//     }
-//   }, []); // The empty array [] means this runs only once on mount
-
-//   // This function is passed down to LoginPage
-//   const handleLogin = (loggedInUser, page) => {
-//     setUser(loggedInUser);
-//     setCurrentPage(page);
-//   };
-
-//   // This function is passed to the dashboard pages
-//   const handleLogout = () => {
-//     setUser(null);
-//     localStorage.removeItem('token');
-//     localStorage.removeItem('user');
-//     setCurrentPage('login');
-//   };
-
-//   // The state for quizzes will be added back later,
-//   // once we build the API endpoints for them.
-//   // For now, we are focusing on authentication.
-
-//   const renderPage = () => {
-//     // If there is no user object, they must either login or signup
-//     if (!user) {
-//       switch (currentPage) {
-//         case 'signup':
-//           return <SignupPage setCurrentPage={setCurrentPage} />;
-//         case 'login':
-//         default:
-//           return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />;
-//       }
-//     }
-
-//     // If a user object exists, show pages based on their role
-//     switch (currentPage) {
-//       case 'dashboard':
-//         // NOTE: We will need to fetch score, hearts, performance data from the API
-//         // For now, we pass placeholder values.
-//         return <Dashboard
-//           user={user}
-//           score={0}
-//           hearts={3}
-//           studentPerformance={{ easy: { correct: 0, total: 0 }, medium: { correct: 0, total: 0 }, hard: { correct: 0, total: 0 } }}
-//           onLogout={handleLogout}
-//           isEvaluated={false}
-//           onStartQuiz={() => alert('Quiz API not implemented yet!')}
-//         />;
-//       case 'therapist-dashboard':
-//         // NOTE: We will need to fetch studentsData from the API
-//         return <TherapistDashboard
-//           user={user}
-//           studentsData={[]} // Pass an empty array for now
-//           onLogout={handleLogout}
-//         />;
-//       // The 'quiz' case can be added back later
-//       default:
-//         return <div>Page not found</div>;
-//     }
-//   };
-
-//   return <>{renderPage()}</>;
-// };
-
-// export default App;
 
 
 
-// src/App.js
+
+
+
+
+
+
+// // src/App.js (Updated for Confetti)
 
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
@@ -213,13 +20,13 @@
 // const App = () => {
 //     const [currentPage, setCurrentPage] = useState('login');
 //     const [user, setUser] = useState(null);
-    
-//     // State for managing quizzes
 //     const [currentQuizLevel, setCurrentQuizLevel] = useState(null);
 //     const [quizQuestions, setQuizQuestions] = useState([]);
 //     const [loadingQuiz, setLoadingQuiz] = useState(false);
+    
+//     // --- NEW STATE FOR CONFETTI ---
+//     const [showConfetti, setShowConfetti] = useState(false);
 
-//     // This effect runs once when the app loads to check for a logged-in user
 //     useEffect(() => {
 //         const storedUser = localStorage.getItem('user');
 //         const token = localStorage.getItem('token');
@@ -230,13 +37,11 @@
 //         }
 //     }, []);
 
-//     // Passed to LoginPage to set state after a successful API call
 //     const handleLogin = (loggedInUser, page) => {
 //         setUser(loggedInUser);
 //         setCurrentPage(page);
 //     };
 
-//     // Passed to dashboard pages to clear state and local storage
 //     const handleLogout = () => {
 //         setUser(null);
 //         localStorage.removeItem('token');
@@ -244,69 +49,105 @@
 //         setCurrentPage('login');
 //     };
 
-//     // This is the function that now calls our backend API
 //     const handleStartQuiz = async (level) => {
+//         // Hide confetti when starting a new quiz
+//         setShowConfetti(false);
 //         setLoadingQuiz(true);
 //         setCurrentQuizLevel(level);
 //         try {
-//             // API CALL to our backend to get the questions for the chosen level
 //             const res = await axios.get(`http://localhost:5000/api/quizzes/${level}`);
 //             setQuizQuestions(res.data);
-//             setCurrentPage('quiz'); // Switch to the quiz page on success
+//             setCurrentPage('quiz');
 //         } catch (err) {
-//             alert('Failed to load the quiz. Please make sure the backend server is running and you have seeded the database.');
+//             alert('Failed to load the quiz. Please make sure the backend server is running.');
 //             console.error("Quiz load error:", err);
 //         } finally {
 //             setLoadingQuiz(false);
 //         }
 //     };
 
+//     // --- UPDATED handleQuizEnd to trigger confetti ---
 //     const handleQuizEnd = () => {
-//         // This is where you would ideally re-fetch the user's updated data
-//         // For now, we'll just navigate back to the dashboard
+//         const latestUserData = localStorage.getItem('user');
+//         if (latestUserData) {
+//             setUser(JSON.parse(latestUserData));
+//         }
+        
+//         // Show confetti for 5 seconds when a quiz is finished!
+//         setShowConfetti(true);
+//         setTimeout(() => setShowConfetti(false), 5000);
+
 //         setCurrentPage('dashboard');
 //         setQuizQuestions([]);
 //         setCurrentQuizLevel(null);
 //     };
 
-//     const handleAnswer = (isCorrect, quizLevel) => {
-//         // This is a placeholder. A future step would be to create a POST
-//         // endpoint like /api/quizzes/submit to record the answer.
-//         console.log(`Answered ${isCorrect ? 'correctly' : 'incorrectly'} on ${quizLevel} quiz.`);
-//         if (isCorrect) {
-//             setUser(prevUser => ({ ...prevUser, score: (prevUser.score || 0) + 10 }));
+//     const handleAnswer = async (isCorrect, quizLevel) => {
+//         if (!user || !user.id) {
+//             alert("User session error. Please log in again.");
+//             return handleLogout();
+//         }
+
+//         let updatedPerformance;
+//         let updatedScore;
+
+//         setUser(prevUser => {
+//             const newPerformance = JSON.parse(JSON.stringify(prevUser.performance || { easy: {}, medium: {}, hard: {} }));
+//             if (!newPerformance[quizLevel]) {
+//                 newPerformance[quizLevel] = { correct: 0, total: 0 };
+//             }
+//             newPerformance[quizLevel].total += 1;
+
+//             let newScore = prevUser.score || 0;
+//             if (isCorrect) {
+//                 newPerformance[quizLevel].correct += 1;
+//                 const points = quizLevel === 'easy' ? 10 : quizLevel === 'medium' ? 20 : 30;
+//                 newScore += points;
+//             }
+//             updatedPerformance = newPerformance;
+//             updatedScore = newScore;
+//             return { ...prevUser, performance: newPerformance, score: newScore };
+//         });
+
+//         try {
+//             const body = {
+//                 userId: user.id,
+//                 performance: updatedPerformance,
+//                 score: updatedScore
+//             };
+//             const res = await axios.post('http://localhost:5000/api/users/update-progress', body);
+//             localStorage.setItem('user', JSON.stringify(res.data));
+//         } catch (err) {
+//             console.error("Failed to save progress to the database:", err);
+//             alert("There was an error saving your progress. Please check your connection.");
 //         }
 //     };
 
-//     // Main logic to decide which component to render
 //     const renderPage = () => {
-//         // If there's no user, they can only see login or signup pages
 //         if (!user) {
 //             switch (currentPage) {
-//                 case 'signup': 
-//                     return <SignupPage setCurrentPage={setCurrentPage} />;
-//                 default: 
-//                     return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />;
+//                 case 'signup': return <SignupPage setCurrentPage={setCurrentPage} />;
+//                 default: return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />;
 //             }
 //         }
 
-//         // If a user is logged in, show the appropriate page
 //         switch (currentPage) {
 //             case 'dashboard':
+//                 // --- PASSING THE NEW PROP TO DASHBOARD ---
 //                 return <Dashboard
 //                     user={user}
-//                     score={user.score || 0} // Use real user data from state
-//                     hearts={3} // Hearts can be managed here if needed
-//                     studentPerformance={user.performance || { easy: {}, medium: {}, hard: {} }}
+//                     score={user.score || 0}
+//                     hearts={3}
+//                     studentPerformance={user.performance || { easy: { correct: 0, total: 0 }, medium: { correct: 0, total: 0 }, hard: { correct: 0, total: 0 } }}
 //                     onLogout={handleLogout}
 //                     isEvaluated={user.isEvaluated || false}
 //                     onStartQuiz={handleStartQuiz}
+//                     showConfetti={showConfetti} // Pass the new prop
 //                 />;
 //             case 'therapist-dashboard':
 //                 return <TherapistDashboard user={user} onLogout={handleLogout} />;
 //             case 'quiz':
 //                 if (loadingQuiz) return <div>Loading Quiz...</div>;
-//                 // The QuizPage component expects a specific data structure, so we recreate it here
 //                 const quizDataForPage = { [currentQuizLevel]: quizQuestions };
 //                 return <QuizPage
 //                     quizData={quizDataForPage}
@@ -317,7 +158,6 @@
 //                     onQuizEnd={handleQuizEnd}
 //                 />;
 //             default:
-//                 // Fallback for an unknown page state
 //                 return <Dashboard user={user} onLogout={handleLogout} onStartQuiz={handleStartQuiz} />;
 //         }
 //     };
@@ -327,39 +167,7 @@
 
 // export default App;
 
-// front_end/my-app/src/App.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// src/App.js (Updated to manage emotion state)
 
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
@@ -375,6 +183,10 @@
 //     const [currentQuizLevel, setCurrentQuizLevel] = useState(null);
 //     const [quizQuestions, setQuizQuestions] = useState([]);
 //     const [loadingQuiz, setLoadingQuiz] = useState(false);
+//     const [showConfetti, setShowConfetti] = useState(false);
+
+//     // --- NEW: STATE TO HOLD THE CURRENT DETECTED EMOTION ---
+//     const [currentEmotion, setCurrentEmotion] = useState('neutral');
 
 //     useEffect(() => {
 //         const storedUser = localStorage.getItem('user');
@@ -399,6 +211,7 @@
 //     };
 
 //     const handleStartQuiz = async (level) => {
+//         setShowConfetti(false);
 //         setLoadingQuiz(true);
 //         setCurrentQuizLevel(level);
 //         try {
@@ -406,73 +219,65 @@
 //             setQuizQuestions(res.data);
 //             setCurrentPage('quiz');
 //         } catch (err) {
-//             alert('Failed to load the quiz. Please make sure the backend server is running and you have seeded the database.');
+//             alert('Failed to load the quiz. Please make sure the backend server is running.');
 //             console.error("Quiz load error:", err);
 //         } finally {
 //             setLoadingQuiz(false);
 //         }
 //     };
 
-//     const handleQuizEnd = async () => {
-//         // When the quiz ends, we want to get the freshest user data from the DB
-//         // to make sure the dashboard is 100% up to date.
-//         if (user && user.id) {
-//             try {
-//                 // We'll add a specific route for this later, for now we re-login logic
-//                 // A better route would be GET /api/users/me
-//                 const storedUser = localStorage.getItem('user');
-//                 if (storedUser) {
-//                     setUser(JSON.parse(storedUser));
-//                 }
-//             } catch (err) {
-//                 console.error("Failed to refresh user data", err);
-//             }
+//     const handleQuizEnd = () => {
+//         const latestUserData = localStorage.getItem('user');
+//         if (latestUserData) {
+//             setUser(JSON.parse(latestUserData));
 //         }
+//         setShowConfetti(true);
+//         setTimeout(() => setShowConfetti(false), 5000);
 //         setCurrentPage('dashboard');
 //         setQuizQuestions([]);
 //         setCurrentQuizLevel(null);
 //     };
 
-//     // --- THIS IS THE FINAL, FULLY-FUNCTIONAL VERSION OF handleAnswer ---
+//     // --- UPDATED: handleAnswer now sends the emotion data to the backend ---
 //     const handleAnswer = async (isCorrect, quizLevel) => {
-//         let updatedUserForAPI;
+//         if (!user || !user.id) {
+//             alert("User session error. Please log in again.");
+//             return handleLogout();
+//         }
 
-//         // Step 1: Optimistically update the state in the frontend for a fast, responsive UI.
+//         let updatedPerformance;
+//         let updatedScore;
+
 //         setUser(prevUser => {
-//             const updatedUser = JSON.parse(JSON.stringify(prevUser));
-//             if (!updatedUser.performance) {
-//                 updatedUser.performance = { easy: { correct: 0, total: 0 }, medium: { correct: 0, total: 0 }, hard: { correct: 0, total: 0 }};
+//             const newPerformance = JSON.parse(JSON.stringify(prevUser.performance || { easy: {}, medium: {}, hard: {} }));
+//             if (!newPerformance[quizLevel]) {
+//                 newPerformance[quizLevel] = { correct: 0, total: 0 };
 //             }
-//             if (!updatedUser.performance[quizLevel]) {
-//                 updatedUser.performance[quizLevel] = { correct: 0, total: 0 };
-//             }
-//             updatedUser.performance[quizLevel].total += 1;
+//             newPerformance[quizLevel].total += 1;
 
+//             let newScore = prevUser.score || 0;
 //             if (isCorrect) {
-//                 updatedUser.performance[quizLevel].correct += 1;
+//                 newPerformance[quizLevel].correct += 1;
 //                 const points = quizLevel === 'easy' ? 10 : quizLevel === 'medium' ? 20 : 30;
-//                 updatedUser.score = (updatedUser.score || 0) + points;
+//                 newScore += points;
 //             }
-            
-//             updatedUserForAPI = updatedUser; // Store the updated object to send to the API
-//             return updatedUser;
+//             updatedPerformance = newPerformance;
+//             updatedScore = newScore;
+//             return { ...prevUser, performance: newPerformance, score: newScore };
 //         });
 
-//         // Step 2: Send the update to the backend to be saved permanently in the database.
 //         try {
+//             // The body of our request now includes the quiz level and the current emotion
 //             const body = {
-//                 userId: updatedUserForAPI.id,
-//                 performance: updatedUserForAPI.performance,
-//                 score: updatedUserForAPI.score
+//                 userId: user.id,
+//                 performance: updatedPerformance,
+//                 score: updatedScore,
+//                 quizLevel: quizLevel,      // NEW
+//                 emotion: currentEmotion,   // NEW
 //             };
             
-//             // The API will save the progress and send back the confirmed, updated user object
 //             const res = await axios.post('http://localhost:5000/api/users/update-progress', body);
-            
-//             // Step 3: Update local storage with the confirmed data from the server.
-//             // This ensures progress is saved even if the user refreshes the page.
 //             localStorage.setItem('user', JSON.stringify(res.data));
-
 //         } catch (err) {
 //             console.error("Failed to save progress to the database:", err);
 //             alert("There was an error saving your progress. Please check your connection.");
@@ -493,12 +298,14 @@
 //                     user={user}
 //                     score={user.score || 0}
 //                     hearts={3}
-//                     studentPerformance={user.performance || { easy: { correct: 0, total: 0 }, medium: { correct: 0, total: 0 }, hard: { correct: 0, total: 0 } }}
+//                     studentPerformance={user.performance || { easy: {}, medium: {}, hard: {} }}
 //                     onLogout={handleLogout}
 //                     isEvaluated={user.isEvaluated || false}
 //                     onStartQuiz={handleStartQuiz}
+//                     showConfetti={showConfetti}
 //                 />;
 //             case 'therapist-dashboard':
+//                 // We will add routing here later to go to a detail page
 //                 return <TherapistDashboard user={user} onLogout={handleLogout} />;
 //             case 'quiz':
 //                 if (loadingQuiz) return <div>Loading Quiz...</div>;
@@ -510,6 +317,9 @@
 //                     hearts={3}
 //                     onAnswer={handleAnswer}
 //                     onQuizEnd={handleQuizEnd}
+//                     // --- NEW: Pass down the emotion state and the setter function ---
+//                     currentEmotion={currentEmotion}
+//                     onEmotionChange={setCurrentEmotion}
 //                 />;
 //             default:
 //                 return <Dashboard user={user} onLogout={handleLogout} onStartQuiz={handleStartQuiz} />;
@@ -521,174 +331,608 @@
 
 // export default App;
 
+// src/App.js (Updated for React Router)
+
+// import React, { useState, useEffect } from 'react';
+// import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+// import axios from 'axios';
+// import './App.css';
+// import LoginPage from './components/LoginPage';
+// import SignupPage from './components/SignupPage';
+// import Dashboard from './components/Dashboard';
+// import QuizPage from './components/QuizPage';
+// import TherapistDashboard from './components/TherapistDashboard';
+// // --- We will create this new component in the next step ---
+// import StudentDetailPage from './components/StudentDetailPage'; 
+
+// const App = () => {
+//     // --- State management remains mostly the same ---
+//     const [user, setUser] = useState(null);
+//     const [quizQuestions, setQuizQuestions] = useState([]);
+//     const [loadingQuiz, setLoadingQuiz] = useState(false);
+//     const [showConfetti, setShowConfetti] = useState(false);
+//     const [currentEmotion, setCurrentEmotion] = useState('neutral');
+    
+//     // --- React Router hooks for navigation ---
+//     const navigate = useNavigate();
+//     const location = useLocation();
+
+//     // Effect to check for logged-in user and handle initial navigation
+//     useEffect(() => {
+//         const token = localStorage.getItem('token');
+//         const storedUser = localStorage.getItem('user');
+//         if (token && storedUser) {
+//             const parsedUser = JSON.parse(storedUser);
+//             setUser(parsedUser);
+//             // If user is logged in but on the login page, redirect them to their dashboard
+//             if (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/signup') {
+//                 navigate(parsedUser.role === 'therapist' ? '/therapist-dashboard' : '/dashboard');
+//             }
+//         } else {
+//             // If no token, force redirect to login unless they are trying to sign up
+//             if (location.pathname !== '/signup') {
+//                 navigate('/login');
+//             }
+//         }
+//     }, []); // Runs only once
+
+//     // --- All handler functions remain the same, but now use navigate() ---
+//     const handleLogin = (loggedInUser) => {
+//         setUser(loggedInUser);
+//         navigate(loggedInUser.role === 'therapist' ? '/therapist-dashboard' : '/dashboard');
+//     };
+
+//     const handleLogout = () => {
+//         setUser(null);
+//         localStorage.removeItem('token');
+//         localStorage.removeItem('user');
+//         navigate('/login');
+//     };
+
+//     const handleStartQuiz = async (level) => {
+//         // Logic is the same, but navigation is handled by navigate()
+//         setShowConfetti(false);
+//         setLoadingQuiz(true);
+//         try {
+//             const res = await axios.get(`http://localhost:5000/api/quizzes/${level}`);
+//             setQuizQuestions(res.data);
+//             navigate(`/quiz/${level}`); // Navigate to a dynamic quiz route
+//         } catch (err) {
+//             alert('Failed to load the quiz.');
+//         } finally {
+//             setLoadingQuiz(false);
+//         }
+//     };
+    
+//     const handleQuizEnd = () => {
+//         const latestUserData = localStorage.getItem('user');
+//         if (latestUserData) {
+//             setUser(JSON.parse(latestUserData));
+//         }
+//         setShowConfetti(true);
+//         setTimeout(() => setShowConfetti(false), 5000);
+//         navigate('/dashboard'); // Navigate back to the dashboard
+//     };
+
+//     const handleAnswer = async (isCorrect, quizLevel) => {
+//         // Logic remains exactly the same
+//         if (!user || !user.id) return handleLogout();
+//         let updatedPerformance, updatedScore;
+//         setUser(prev => {
+//             const newUser = { ...prev };
+//             newUser.performance = JSON.parse(JSON.stringify(prev.performance || { easy: {}, medium: {}, hard: {} }));
+//             if (!newUser.performance[quizLevel]) newUser.performance[quizLevel] = { correct: 0, total: 0 };
+//             newUser.performance[quizLevel].total += 1;
+//             if (isCorrect) {
+//                 newUser.performance[quizLevel].correct += 1;
+//                 const points = quizLevel === 'easy' ? 10 : quizLevel === 'medium' ? 20 : 30;
+//                 newUser.score = (newUser.score || 0) + points;
+//             }
+//             updatedPerformance = newUser.performance;
+//             updatedScore = newUser.score;
+//             return newUser;
+//         });
+//         try {
+//             const body = { userId: user.id, performance: updatedPerformance, score: updatedScore, quizLevel, emotion: currentEmotion };
+//             const res = await axios.post('http://localhost:5000/api/users/update-progress', body);
+//             localStorage.setItem('user', JSON.stringify(res.data));
+//         } catch (err) {
+//             console.error(err);
+//         }
+//     };
+
+//     // --- Main render block now uses <Routes> and <Route> ---
+//     return (
+//         <Routes>
+//             {/* Public Routes */}
+//             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+//             <Route path="/signup" element={<SignupPage />} />
+
+//             {/* Protected Student Routes */}
+//             {user && user.role === 'student' && (
+//                 <>
+//                     <Route path="/dashboard" element={
+//                         <Dashboard
+//                             user={user} score={user.score || 0} hearts={3}
+//                             studentPerformance={user.performance} onLogout={handleLogout}
+//                             isEvaluated={user.isEvaluated} onStartQuiz={handleStartQuiz}
+//                             showConfetti={showConfetti}
+//                         />
+//                     }/>
+//                     <Route path="/quiz/:level" element={
+//                         <QuizPage
+//                             quizData={{ questions: quizQuestions }} onQuizEnd={handleQuizEnd}
+//                             onAnswer={handleAnswer} score={user.score || 0} hearts={3}
+//                             currentEmotion={currentEmotion} onEmotionChange={setCurrentEmotion}
+//                         />
+//                     }/>
+//                 </>
+//             )}
+
+//             {/* Protected Therapist Routes */}
+//             {user && user.role === 'therapist' && (
+//                 <>
+//                     <Route path="/therapist-dashboard" element={<TherapistDashboard onLogout={handleLogout} />} />
+//                     {/* The new detail page route! */}
+//                     <Route path="/student/:studentId" element={<StudentDetailPage />} />
+//                 </>
+//             )}
+            
+//             {/* Fallback Route */}
+//             <Route path="*" element={<LoginPage onLogin={handleLogin} />} />
+//         </Routes>
+//     );
+// };
+
+// export default App;
+
+// src/App.js (Corrected for QuizPage props)
+
+// import React, { useState, useEffect } from 'react';
+// import { Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom';
+// import axios from 'axios';
+// import './App.css'; // Make sure CSS is imported
+
+// // Import all your components
+// import LoginPage from './components/LoginPage';
+// import SignupPage from './components/SignupPage';
+// import Dashboard from './components/Dashboard';
+// import QuizPage from './components/QuizPage';
+// import TherapistDashboard from './components/TherapistDashboard';
+// import StudentDetailPage from './components/StudentDetailPage'; 
+
+// const App = () => {
+//     // ... all your state declarations remain the same ...
+//     const [user, setUser] = useState(null);
+//     const [quizQuestions, setQuizQuestions] = useState([]);
+//     const [loadingQuiz, setLoadingQuiz] = useState(false);
+//     const [showConfetti, setShowConfetti] = useState(false);
+//     const [currentEmotion, setCurrentEmotion] = useState('neutral');
+    
+//     const navigate = useNavigate();
+//     const location = useLocation();
+
+//     // ... useEffect for checking login remains the same ...
+//     useEffect(() => { /* ... */ }, []);
+
+//     // ... All handler functions (handleLogin, handleLogout, etc.) remain the same ...
+//     const handleLogin = (loggedInUser) => {
+//         setUser(loggedInUser);
+//         navigate(loggedInUser.role === 'therapist' ? '/therapist-dashboard' : '/dashboard');
+//     };
+//     const handleLogout = () => {
+//         setUser(null);
+//         localStorage.removeItem('token');
+//         localStorage.removeItem('user');
+//         navigate('/login');
+//     };
+//     const handleStartQuiz = async (level) => {
+//         setShowConfetti(false);
+//         setLoadingQuiz(true);
+//         try {
+//             const res = await axios.get(`http://localhost:5000/api/quizzes/${level}`);
+//             setQuizQuestions(res.data);
+//             navigate(`/quiz/${level}`);
+//         } catch (err) { alert('Failed to load the quiz.'); } 
+//         finally { setLoadingQuiz(false); }
+//     };
+//     const handleQuizEnd = () => {
+//         const latestUserData = localStorage.getItem('user');
+//         if (latestUserData) setUser(JSON.parse(latestUserData));
+//         setShowConfetti(true);
+//         setTimeout(() => setShowConfetti(false), 5000);
+//         navigate('/dashboard');
+//     };
+//     const handleAnswer = async (isCorrect, quizLevel) => {
+//         if (!user || !user.id) return handleLogout();
+//         let updatedPerformance, updatedScore;
+//         setUser(prev => {
+//             const newUser = { ...prev };
+//             newUser.performance = JSON.parse(JSON.stringify(prev.performance || { easy: {}, medium: {}, hard: {} }));
+//             if (!newUser.performance[quizLevel]) newUser.performance[quizLevel] = { correct: 0, total: 0 };
+//             newUser.performance[quizLevel].total += 1;
+//             if (isCorrect) {
+//                 newUser.performance[quizLevel].correct += 1;
+//                 const points = quizLevel === 'easy' ? 10 : quizLevel === 'medium' ? 20 : 30;
+//                 newUser.score = (newUser.score || 0) + points;
+//             }
+//             updatedPerformance = newUser.performance;
+//             updatedScore = newUser.score;
+//             return newUser;
+//         });
+//         try {
+//             const body = { userId: user.id, performance: updatedPerformance, score: updatedScore, quizLevel, emotion: currentEmotion };
+//             const res = await axios.post('http://localhost:5000/api/users/update-progress', body);
+//             localStorage.setItem('user', JSON.stringify(res.data));
+//         } catch (err) { console.error(err); }
+//     };
+
+//     return (
+//         <Routes>
+//             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+//             <Route path="/signup" element={<SignupPage />} />
+
+//             {user && user.role === 'student' && (
+//                 <>
+//                     <Route path="/dashboard" element={
+//                         <Dashboard
+//                             user={user} score={user.score || 0} hearts={3}
+//                             studentPerformance={user.performance} onLogout={handleLogout}
+//                             isEvaluated={user.isEvaluated} onStartQuiz={handleStartQuiz}
+//                             showConfetti={showConfetti}
+//                         />
+//                     }/>
+//                     {/* --- THIS IS THE CORRECTED ROUTE --- */}
+//                     <Route path="/quiz/:level" element={
+//                         loadingQuiz ? <div>Loading Quiz...</div> :
+//                         <QuizPage
+//                             questions={quizQuestions} // Pass the questions array directly
+//                             onQuizEnd={handleQuizEnd}
+//                             onAnswer={handleAnswer} 
+//                             score={user.score || 0} 
+//                             hearts={3}
+//                             currentEmotion={currentEmotion} 
+//                             onEmotionChange={setCurrentEmotion}
+//                         />
+//                     }/>
+//                 </>
+//             )}
+
+//             {user && user.role === 'therapist' && (
+//                 <>
+//                     <Route path="/therapist-dashboard" element={<TherapistDashboard onLogout={handleLogout} />} />
+//                     <Route path="/student/:studentId" element={<StudentDetailPage />} />
+//                 </>
+//             )}
+            
+//             <Route path="*" element={<LoginPage onLogin={handleLogin} />} />
+//         </Routes>
+//     );
+// };
+
+// src/App.js (Corrected)
 
 
 
 
 
 
+// import React, { useState, useEffect } from 'react';
+// import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+// import axios from 'axios';
+// import './App.css';
+
+// import LoginPage from './components/LoginPage';
+// import SignupPage from './components/SignupPage';
+// import Dashboard from './components/Dashboard';
+// import QuizPage from './components/QuizPage';
+// import TherapistDashboard from './components/TherapistDashboard';
+// import StudentDetailPage from './components/StudentDetailPage'; 
+
+// const App = () => {
+//     const [user, setUser] = useState(null);
+//     const [quizQuestions, setQuizQuestions] = useState([]);
+//     const [loadingQuiz, setLoadingQuiz] = useState(false);
+//     const [showConfetti, setShowConfetti] = useState(false);
+//     const [currentEmotion, setCurrentEmotion] = useState('neutral');
+    
+//     const navigate = useNavigate();
+//     const location = useLocation();
+
+//     useEffect(() => {
+//         const token = localStorage.getItem('token');
+//         const storedUser = localStorage.getItem('user');
+//         if (token && storedUser) {
+//             const parsedUser = JSON.parse(storedUser);
+//             setUser(parsedUser);
+//             if (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/signup') {
+//                 navigate(parsedUser.role === 'therapist' ? '/therapist-dashboard' : '/dashboard');
+//             }
+//         } else {
+//             if (location.pathname !== '/signup') {
+//                 navigate('/login');
+//             }
+//         }
+//     }, []);
+
+//     const handleLogin = (loggedInUser) => {
+//         setUser(loggedInUser);
+//         navigate(loggedInUser.role === 'therapist' ? '/therapist-dashboard' : '/dashboard');
+//     };
+//     const handleLogout = () => {
+//         setUser(null);
+//         localStorage.removeItem('token');
+//         localStorage.removeItem('user');
+//         navigate('/login');
+//     };
+//     const handleStartQuiz = async (level) => {
+//         setShowConfetti(false);
+//         setLoadingQuiz(true);
+//         try {
+//             const res = await axios.get(`http://localhost:5000/api/quizzes/${level}`);
+//             setQuizQuestions(res.data);
+//             navigate(`/quiz/${level}`);
+//         } catch (err) { alert('Failed to load the quiz.'); } 
+//         finally { setLoadingQuiz(false); }
+//     };
+//     const handleQuizEnd = () => {
+//         const latestUserData = localStorage.getItem('user');
+//         if (latestUserData) setUser(JSON.parse(latestUserData));
+//         setShowConfetti(true);
+//         setTimeout(() => setShowConfetti(false), 5000);
+//         navigate('/dashboard');
+//     };
+//     const handleAnswer = async (isCorrect, quizLevel) => {
+//         if (!user || !user.id) return handleLogout();
+//         let updatedPerformance, updatedScore;
+//         setUser(prev => {
+//             const newUser = { ...prev };
+//             newUser.performance = JSON.parse(JSON.stringify(prev.performance || { easy: {}, medium: {}, hard: {} }));
+//             if (!newUser.performance[quizLevel]) newUser.performance[quizLevel] = { correct: 0, total: 0 };
+//             newUser.performance[quizLevel].total += 1;
+//             if (isCorrect) {
+//                 newUser.performance[quizLevel].correct += 1;
+//                 const points = quizLevel === 'easy' ? 10 : quizLevel === 'medium' ? 20 : 30;
+//                 newUser.score = (newUser.score || 0) + points;
+//             }
+//             updatedPerformance = newUser.performance;
+//             updatedScore = newUser.score;
+//             return newUser;
+//         });
+//         try {
+//             const body = { userId: user.id, performance: updatedPerformance, score: updatedScore, quizLevel: quizLevel, emotion: currentEmotion };
+//             console.log("SENDING THIS TO BACKEND:", body);
+//             const res = await axios.post('http://localhost:5000/api/users/update-progress', body);
+//             localStorage.setItem('user', JSON.stringify(res.data));
+//         } catch (err) { console.error(err); }
+//     };
+
+//     return (
+//         <Routes>
+//             <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+//             <Route path="/signup" element={<SignupPage />} />
+
+//             {user && user.role === 'student' && (
+//                 <>
+//                     <Route path="/dashboard" element={<Dashboard user={user} score={user.score || 0} hearts={3} studentPerformance={user.performance} onLogout={handleLogout} isEvaluated={user.isEvaluated} onStartQuiz={handleStartQuiz} showConfetti={showConfetti} />} />
+//                     <Route path="/quiz/:level" element={loadingQuiz ? <div>Loading Quiz...</div> : <QuizPage questions={quizQuestions} onQuizEnd={handleQuizEnd} onAnswer={handleAnswer} score={user.score || 0} hearts={3} currentEmotion={currentEmotion} onEmotionChange={setCurrentEmotion} />} />
+//                 </>
+//             )}
+
+//             {user && user.role === 'therapist' && (
+//                 <>
+//                     <Route path="/therapist-dashboard" element={<TherapistDashboard onLogout={handleLogout} />} />
+//                     <Route path="/student/:studentId" element={<StudentDetailPage />} />
+//                 </>
+//             )}
+            
+//             <Route path="*" element={<LoginPage onLogin={handleLogin} />} />
+//         </Routes>
+//     );
+// };
+
+// // Ensure this line exists at the end of the file
+// export default App;
 
 
-
-
-
-
-
-
-
-// front_end/my-app/src/App.js (Final Corrected Version)
+// front_end/my-app/src/App.js (Complete and Corrected)
 
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import './App.css';
+
+// Import all your components
 import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import Dashboard from './components/Dashboard';
 import QuizPage from './components/QuizPage';
 import TherapistDashboard from './components/TherapistDashboard';
+import StudentDetailPage from './components/StudentDetailPage'; 
 
 const App = () => {
-    const [currentPage, setCurrentPage] = useState('login');
+    // --- STATE MANAGEMENT ---
     const [user, setUser] = useState(null);
-    const [currentQuizLevel, setCurrentQuizLevel] = useState(null);
     const [quizQuestions, setQuizQuestions] = useState([]);
     const [loadingQuiz, setLoadingQuiz] = useState(false);
+    const [showConfetti, setShowConfetti] = useState(false);
+    const [currentEmotion, setCurrentEmotion] = useState('neutral');
+    
+    // --- ROUTING HOOKS ---
+    const navigate = useNavigate();
+    const location = useLocation();
 
+    // --- EFFECTS ---
+    // This effect runs once to check if a user is already logged in from a previous session.
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
         const token = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
         if (token && storedUser) {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser);
-            setCurrentPage(parsedUser.role === 'therapist' ? 'therapist-dashboard' : 'dashboard');
+            // If the user is on a public page (like /login), redirect them to their dashboard.
+            if (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/signup') {
+                navigate(parsedUser.role === 'therapist' ? '/therapist-dashboard' : '/dashboard');
+            }
+        } else {
+            // If there's no user data, force them to the login page.
+            if (location.pathname !== '/signup') {
+                navigate('/login');
+            }
         }
-    }, []);
+    }, []); // The empty [] means this effect runs only on the initial render.
 
-    const handleLogin = (loggedInUser, page) => {
+
+    // --- HANDLER FUNCTIONS ---
+    const handleLogin = (loggedInUser) => {
         setUser(loggedInUser);
-        setCurrentPage(page);
+        navigate(loggedInUser.role === 'therapist' ? '/therapist-dashboard' : '/dashboard');
     };
 
     const handleLogout = () => {
         setUser(null);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        setCurrentPage('login');
+        navigate('/login');
     };
 
     const handleStartQuiz = async (level) => {
+        setShowConfetti(false);
         setLoadingQuiz(true);
-        setCurrentQuizLevel(level);
         try {
             const res = await axios.get(`http://localhost:5000/api/quizzes/${level}`);
             setQuizQuestions(res.data);
-            setCurrentPage('quiz');
-        } catch (err) {
-            alert('Failed to load the quiz. Please make sure the backend server is running and you have seeded the database.');
-            console.error("Quiz load error:", err);
-        } finally {
-            setLoadingQuiz(false);
+            navigate(`/quiz/${level}`);
+        } catch (err) { 
+            alert('Failed to load the quiz. Please ensure the backend server is running.'); 
+        } finally { 
+            setLoadingQuiz(false); 
         }
     };
 
+    // const handleQuizEnd = () => {
+    //     const latestUserData = localStorage.getItem('user');
+    //     if (latestUserData) {
+    //         setUser(JSON.parse(latestUserData));
+    //     }
+    //     setShowConfetti(true);
+    //     setTimeout(() => setShowConfetti(false), 5000);
+    //     navigate('/dashboard');
+    // };
+        // THIS IS THE NEW, CORRECTED VERSION
     const handleQuizEnd = () => {
-        setCurrentPage('dashboard');
-        setQuizQuestions([]);
-        setCurrentQuizLevel(null);
+    // Its only jobs are to show confetti and navigate.
+    // The user state is already correct from the last handleAnswer call.
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 5000);
+    navigate('/dashboard'); 
     };
-
-    // --- THIS IS THE FINAL, FULLY-FUNCTIONAL VERSION OF handleAnswer ---
+    
+    // This is the fully corrected version of the answer handler.
     const handleAnswer = async (isCorrect, quizLevel) => {
-        // DEFENSIVE CHECK: Make sure we have a user and a user ID before proceeding.
         if (!user || !user.id) {
             alert("User session error. Please log in again.");
-            return handleLogout(); // Log out the user if their state is invalid.
+            return handleLogout();
         }
 
-        let updatedPerformance;
-        let updatedScore;
+        // --- THE FINAL CORRECTED LOGIC ---
+        // 1. Calculate the new performance and score based on the CURRENT state.
+        const newPerformance = JSON.parse(JSON.stringify(user.performance || { easy: {}, medium: {}, hard: {} }));
+        if (!newPerformance[quizLevel]) {
+            newPerformance[quizLevel] = { correct: 0, total: 0 };
+        }
+        newPerformance[quizLevel].total += 1;
 
-        // Step 1: Optimistically update the state in the frontend for a fast, responsive UI.
-        setUser(prevUser => {
-            const newPerformance = JSON.parse(JSON.stringify(prevUser.performance || { easy: {}, medium: {}, hard: {} }));
-            
-            if (!newPerformance[quizLevel]) {
-                newPerformance[quizLevel] = { correct: 0, total: 0 };
-            }
-            newPerformance[quizLevel].total += 1;
+        let newScore = user.score || 0;
+        if (isCorrect) {
+            newPerformance[quizLevel].correct += 1;
+            const points = quizLevel === 'easy' ? 10 : quizLevel === 'medium' ? 20 : 30;
+            newScore += points;
+        }
 
-            let newScore = prevUser.score || 0;
-            if (isCorrect) {
-                newPerformance[quizLevel].correct += 1;
-                const points = quizLevel === 'easy' ? 10 : quizLevel === 'medium' ? 20 : 30;
-                newScore += points;
-            }
-            
-            // Store the updated parts to send to the API
-            updatedPerformance = newPerformance;
-            updatedScore = newScore;
-            
-            // Return the new state for React to render
-            return { ...prevUser, performance: newPerformance, score: newScore };
+        // 2. Update the user interface immediately for a smooth experience.
+        setUser({
+            ...user,
+            performance: newPerformance,
+            score: newScore,
         });
 
-        // Step 2: Send the update to the backend to be saved permanently in the database.
+        // 3. Now, send the clean, calculated data to the backend to be saved permanently.
         try {
             const body = {
-                userId: user.id, // Use the original user.id from the state, which is guaranteed to be correct.
-                performance: updatedPerformance,
-                score: updatedScore
+                userId: user.id,
+                performance: newPerformance, // Use the new object we created
+                score: newScore,             // Use the new value we created
+                quizLevel: quizLevel,
+                emotion: currentEmotion,
             };
+
+            console.log("DEBUG: Sending this data to the backend --->", body);
             
             const res = await axios.post('http://localhost:5000/api/users/update-progress', body);
             
-            // Step 3: Update local storage with the confirmed data from the server.
+            // 4. Update the browser's storage with the final, confirmed data from the server.
             localStorage.setItem('user', JSON.stringify(res.data));
 
         } catch (err) {
-            console.error("Failed to save progress to the database:", err);
-            // This alert is what you are seeing.
-            alert("There was an error saving your progress. Please check your connection.");
+            console.error("Failed to save progress:", err);
+            alert("There was an error saving your progress.");
+            // Optional: You could revert the UI update here if the save fails.
+            // setUser(user); 
         }
     };
 
-    const renderPage = () => {
-        if (!user) {
-            switch (currentPage) {
-                case 'signup': return <SignupPage setCurrentPage={setCurrentPage} />;
-                default: return <LoginPage onLogin={handleLogin} setCurrentPage={setCurrentPage} />;
-            }
-        }
 
-        switch (currentPage) {
-            case 'dashboard':
-                return <Dashboard
-                    user={user}
-                    score={user.score || 0}
-                    hearts={3}
-                    studentPerformance={user.performance || { easy: { correct: 0, total: 0 }, medium: { correct: 0, total: 0 }, hard: { correct: 0, total: 0 } }}
-                    onLogout={handleLogout}
-                    isEvaluated={user.isEvaluated || false}
-                    onStartQuiz={handleStartQuiz}
-                />;
-            case 'therapist-dashboard':
-                return <TherapistDashboard user={user} onLogout={handleLogout} />;
-            case 'quiz':
-                if (loadingQuiz) return <div>Loading Quiz...</div>;
-                const quizDataForPage = { [currentQuizLevel]: quizQuestions };
-                return <QuizPage
-                    quizData={quizDataForPage}
-                    currentQuiz={currentQuizLevel}
-                    score={user.score || 0}
-                    hearts={3}
-                    onAnswer={handleAnswer}
-                    onQuizEnd={handleQuizEnd}
-                />;
-            default:
-                return <Dashboard user={user} onLogout={handleLogout} onStartQuiz={handleStartQuiz} />;
-        }
-    };
+    // --- RENDER LOGIC ---
+    return (
+        <Routes>
+            {/* Public Routes accessible to everyone */}
+            <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+            <Route path="/signup" element={<SignupPage />} />
 
-    return <>{renderPage()}</>;
+            {/* Protected Routes for logged-in Students */}
+            {user && user.role === 'student' && (
+                <>
+                    <Route path="/dashboard" element={
+                        <Dashboard 
+                            user={user} 
+                            score={user.score || 0} 
+                            hearts={3} 
+                            studentPerformance={user.performance} 
+                            onLogout={handleLogout} 
+                            isEvaluated={user.isEvaluated} 
+                            onStartQuiz={handleStartQuiz} 
+                            showConfetti={showConfetti} 
+                        />
+                    }/>
+                    <Route path="/quiz/:level" element={
+                        loadingQuiz ? <div>Loading Quiz...</div> : 
+                        <QuizPage 
+                            questions={quizQuestions} 
+                            onQuizEnd={handleQuizEnd}
+                            onAnswer={handleAnswer} 
+                            score={user.score || 0} 
+                            hearts={3}
+                            currentEmotion={currentEmotion} 
+                            onEmotionChange={setCurrentEmotion}
+                        />
+                    }/>
+                </>
+            )}
+
+            {/* Protected Routes for the logged-in Therapist */}
+            {user && user.role === 'therapist' && (
+                <>
+                    <Route path="/therapist-dashboard" element={<TherapistDashboard onLogout={handleLogout} />} />
+                    <Route path="/student/:studentId" element={<StudentDetailPage />} />
+                </>
+            )}
+            
+            {/* Fallback route - if no other route matches, go to login */}
+            <Route path="*" element={<LoginPage onLogin={handleLogin} />} />
+        </Routes>
+    );
 };
 
 export default App;
+
