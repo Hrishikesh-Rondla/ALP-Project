@@ -1,4 +1,7 @@
 /* 
+
+
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -6,7 +9,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 
 .bg-gradient-purple-pink {
   background: linear-gradient(to right, #a855f7, #ec4899);
@@ -22,21 +24,50 @@ body {
 }
 
 
+
+@keyframes gradient-animation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+.animated-gradient {
+    background-size: 400% 400%; 
+    animation: gradient-animation 20s ease infinite; 
+}
+
+
 .bg-gradient-page-login {
-  background: linear-gradient(to bottom right, #c084fc, #f472b6, #60a5fa);
+  background: linear-gradient(135deg, #c084fc, #f472b6, #60a5fa, #f472b6);
+
+  background-size: 400% 400%;
+  animation: gradient-animation 20s ease infinite;
 }
 .bg-gradient-page-signup {
-  background: linear-gradient(to bottom right, #4ade80, #60a5fa, #c084fc);
+  background: linear-gradient(135deg, #4ade80, #60a5fa, #c084fc, #4ade80);
+  background-size: 400% 400%;
+  animation: gradient-animation 20s ease infinite;
 }
 .bg-gradient-page-dashboard {
-  background: linear-gradient(to bottom right, #fcd34d, #fdba74, #f87171);
+  background: linear-gradient(135deg, #fcd34d, #fdba74, #f87171, #fdba74);
+  background-size: 400% 400%;
+  animation: gradient-animation 20s ease infinite;
 }
 .bg-gradient-page-quiz {
-  background: linear-gradient(to bottom right, #93c5fd, #c4b5fd, #f9a8d4);
+  background: linear-gradient(135deg, #93c5fd, #c4b5fd, #f9a8d4, #c4b5fd);
+  background-size: 400% 400%;
+  animation: gradient-animation 20s ease infinite;
 }
 .bg-gradient-page-therapist {
-  background: linear-gradient(to bottom right, #e0f2fe, #eef2ff);
+ 
+  background: linear-gradient(135deg, #e0f2fe, #dbeafe, #eef2ff, #dbeafe);
+  background-size: 400% 400%;
+  animation: gradient-animation 25s ease infinite;
 }
+
+
+
 
 
 .bg-light-red {
@@ -48,7 +79,6 @@ body {
 .bg-light-green {
   background-color: #f0fdf4;
 }
-
 
 .icon-circle {
   width: 5rem;
@@ -87,7 +117,7 @@ body {
   animation: fadeIn 0.5s ease-out forwards;
 } */
 
-/* src/App.css (Updated with Animated Backgrounds) */
+/* src/App.css (Final Version with Transition Helper) */
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -111,25 +141,14 @@ body {
   background: linear-gradient(to right, #3b82f6, #6366f1);
 }
 
-/* --- THIS IS THE NEW ANIMATION LOGIC --- */
-
-/* 1. Define the animation that shifts the background */
+/* Animated Page Backgrounds */
 @keyframes gradient-animation {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
-/* 2. Create a base class to apply the animation properties */
-.animated-gradient {
-    background-size: 400% 400%; /* Make the gradient canvas very large */
-    animation: gradient-animation 20s ease infinite; /* Apply the animation */
-}
-
-/* 3. Apply the animation to your existing page background classes */
 .bg-gradient-page-login {
   background: linear-gradient(135deg, #c084fc, #f472b6, #60a5fa, #f472b6);
-  /* All page backgrounds will now have the animation */
   background-size: 400% 400%;
   animation: gradient-animation 20s ease infinite;
 }
@@ -149,13 +168,10 @@ body {
   animation: gradient-animation 20s ease infinite;
 }
 .bg-gradient-page-therapist {
-  /* A more subtle animation for the therapist page */
   background: linear-gradient(135deg, #e0f2fe, #dbeafe, #eef2ff, #dbeafe);
   background-size: 400% 400%;
   animation: gradient-animation 25s ease infinite;
 }
-
-/* --- END OF NEW ANIMATION LOGIC --- */
 
 
 /* Subtle Background Colors */
@@ -205,4 +221,13 @@ body {
 
 .card {
   animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* --- NEW CLASS FOR PAGE TRANSITIONS --- */
+/* This ensures the page takes up the full width and height
+   during the animation, preventing layout jumps. */
+.page-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }

@@ -1,39 +1,28 @@
 
 
+// src/components/LoginPage.js (Corrected for React Router)
+
 // import React, { useState } from 'react';
 // import axios from 'axios';
+// import { useNavigate } from 'react-router-dom'; // Import useNavigate
 // import { Book, User, Lock } from 'lucide-react';
 
-// // The 'therapistCredentials' prop is no longer needed
-// const LoginPage = ({ onLogin, setCurrentPage }) => { 
+// const LoginPage = ({ onLogin }) => { 
 //     const [username, setUsername] = useState('');
 //     const [password, setPassword] = useState('');
 //     const [loginType, setLoginType] = useState('student');
+//     const navigate = useNavigate(); // Initialize the navigate function
 
 //     const handleLogin = async () => {
-//         const loginData = {
-//             username: username,
-//             password: password,
-//             loginType: loginType // Send the type of login to the backend
-//         };
-
+//         const loginData = { username, password, loginType };
 //         try {
-//             // API CALL to our backend's /login endpoint
 //             const res = await axios.post('http://localhost:5000/api/auth/login', loginData);
-
-//             // The backend sends back a token and user info on success
 //             const { token, user } = res.data;
-            
-//             // Store the token and user in the browser's local storage for persistence
 //             localStorage.setItem('token', token);
 //             localStorage.setItem('user', JSON.stringify(user));
-
-//             // Call the main onLogin function from App.js to update the state
-//             onLogin(user, user.role === 'therapist' ? 'therapist-dashboard' : 'dashboard');
-
+//             onLogin(user); // onLogin will now handle the navigation
 //         } catch (err) {
-//             // If the server sends an error (e.g., bad password, wrong login type)
-//             alert(err.response?.data?.msg || 'Login failed! Please check your details.');
+//             alert(err.response?.data?.msg || 'Login failed!');
 //         }
 //     };
 
@@ -57,17 +46,19 @@
 //                             <label className="form-label fw-medium"><User className="d-inline me-2" size={20} />{loginType === 'therapist' ? 'Username' : 'Student Username'}</label>
 //                             <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control form-control-lg" placeholder={loginType === 'therapist' ? 'Enter username' : 'e.g., alex123'} required />
 //                         </div>
-
 //                         <div className="mb-3">
 //                             <label className="form-label fw-medium"><Lock className="d-inline me-2" size={20} />Password</label>
 //                             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control form-control-lg" placeholder="Enter password" required />
 //                         </div>
-
 //                         <button type="submit" className="btn btn-primary btn-lg w-100 fw-bold hover-scale mt-3">{loginType === 'therapist' ? 'Access Dashboard' : "Let's Play!"}</button>
 //                     </form>
 
 //                     <div className="text-center mt-4">
-//                         <button onClick={() => setCurrentPage('signup')} className="btn btn-link">New here? Sign up!</button>
+//                         {/* --- THIS IS THE FIX --- */}
+//                         {/* Instead of calling setCurrentPage, we now navigate to the /signup URL */}
+//                         <button onClick={() => navigate('/signup')} className="btn btn-link">
+//                             New here? Sign up!
+//                         </button>
 //                     </div>
 //                 </div>
 //             </div>
@@ -77,29 +68,35 @@
 
 // export default LoginPage;
 
+
 // src/components/LoginPage.js (Corrected for React Router)
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { Book, User, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { BrainCircuit, User, Lock } from 'lucide-react'; // Changed icon
 
 const LoginPage = ({ onLogin }) => { 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loginType, setLoginType] = useState('student');
-    const navigate = useNavigate(); // Initialize the navigate function
+    const navigate = useNavigate();
 
     const handleLogin = async () => {
         const loginData = { username, password, loginType };
         try {
             const res = await axios.post('http://localhost:5000/api/auth/login', loginData);
             const { token, user } = res.data;
+            
+            // Save to browser storage
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
-            onLogin(user); // onLogin will now handle the navigation
+
+            // Call the function passed down from App.js
+            onLogin(user); 
+
         } catch (err) {
-            alert(err.response?.data?.msg || 'Login failed!');
+            alert(err.response?.data?.msg || 'Login failed! Please check your details.');
         }
     };
 
@@ -108,7 +105,9 @@ const LoginPage = ({ onLogin }) => {
             <div className="card shadow-lg rounded-5 p-4 p-md-5 w-100" style={{ maxWidth: '450px' }}>
                 <div className="card-body">
                     <div className="text-center mb-4">
-                        <div className="icon-circle bg-gradient-purple-pink mx-auto mb-3"><Book size={40} /></div>
+                        <div className="icon-circle bg-gradient-purple-pink mx-auto mb-3">
+                            <BrainCircuit size={40} />
+                        </div>
                         <h1 className="h3 fw-bold text-dark mb-1">Learning Fun!</h1>
                         <p className="text-muted">Let's learn together!</p>
                     </div>
@@ -131,8 +130,6 @@ const LoginPage = ({ onLogin }) => {
                     </form>
 
                     <div className="text-center mt-4">
-                        {/* --- THIS IS THE FIX --- */}
-                        {/* Instead of calling setCurrentPage, we now navigate to the /signup URL */}
                         <button onClick={() => navigate('/signup')} className="btn btn-link">
                             New here? Sign up!
                         </button>

@@ -1,0 +1,12 @@
+node_modules
+# Ignore virtual environments
+venv/
+ml_service/venv/
+
+# Ignore large binary files
+*.dll
+*.pyd
+*.so
+*.exe
+*.zip
+*.mp4

@@ -1,5 +1,6 @@
 # Ignore the folder with all the installed packages
 node_modules/
+.env
 
 # Ignore the file with our secrets
 .env
