@@ -20,7 +20,9 @@ app.use('/api/auth', require('./routes/auth'));
 // We will add more routes later
 app.use('/api/quizzes', require('./routes/quizzes'));
 
-app.use('/api/users', require('./routes/users'));  
+app.use('/api/users', require('./routes/users'));
+
+app.use('/api/superadmin', require('./routes/superadmin'));
 
 
 const PORT = process.env.PORT || 5000;

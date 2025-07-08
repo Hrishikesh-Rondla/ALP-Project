@@ -1,33 +1,20 @@
-// import React from 'react';
-// import ReactDOM from 'react-dom/client';
-// import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
-// import './App.css'; // Import our custom CSS
-// import App from './App';
-
-// const root = ReactDOM.createRoot(document.getElementById('root'));
-// root.render(
-//   <React.StrictMode>
-//     <App />
-//   </React.StrictMode>
-// );
-
-// src/index.js (Updated for React Router)
+// frontend/src/index.js
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom'; // Import the router
+
+// Import the AppWrapper, which contains the BrowserRouter
+import AppWrapper from './App';
+
+// If you have a main CSS file for bootstrap or custom styles, import it here
+// For example:
+// import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  // StrictMode helps find potential problems in an application.
   <React.StrictMode>
-    {/* Wrap the entire App component with BrowserRouter */}
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <AppWrapper />
   </React.StrictMode>
 );
-
-reportWebVitals();
