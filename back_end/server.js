@@ -24,6 +24,9 @@ app.use('/api/users', require('./routes/users'));
 
 app.use('/api/superadmin', require('./routes/superadmin'));
 
+// Add this line in server.js
+app.use('/api/stats/dashboard', require('./stats/dashboard'));
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Backend server is running on http://localhost:${PORT}`));

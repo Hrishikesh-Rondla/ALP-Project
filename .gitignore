@@ -1,0 +1,80 @@
+# =========================================================================
+# GENERAL
+# =========================================================================
+
+# Environment variables
+# This is the MOST IMPORTANT rule. Never commit your secret keys,
+# database connection strings, or passwords.
+.env
+.env.*
+!.env.example
+
+# IDE and editor directories
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# =========================================================================
+# NODE / JAVASCRIPT (For FRONT_END and BACK_END)
+# =========================================================================
+
+# The node_modules folder is huge and can be re-installed by anyone
+# who clones the project by running `npm install`.
+node_modules/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+build/
+dist/
+
+# =================================e========================================
+# PYTHON (For Real_ML_Service)
+# =========================================================================
+
+# Python virtual environment
+# Like node_modules, this can be recreated by running `pip install -r requirements.txt`.
+venv/
+env/
+.venv/
+
+# Python bytecode and caches
+__pycache__/
+*.pyc
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# =========================================================================
+# LARGE FILES (Optional but Recommended)
+# =========================================================================
+
+# If your model file is very large (e.g., > 100MB), you might want to ignore it
+# and use Git LFS (Large File Storage) or provide a download link in the README.
+# For now, we will assume it's okay to commit. If it's too big, uncomment the line below.
+# *.pt
+# *.h5

@@ -134,3 +134,5 @@ const QuizPage = ({ questions, onQuizEnd, onAnswer, score, hearts, currentEmotio
 };
 
 export default QuizPage;
+
+

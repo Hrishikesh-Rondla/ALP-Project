@@ -1,20 +1,19 @@
-// frontend/src/index.js
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-// Import the AppWrapper, which contains the BrowserRouter
-import AppWrapper from './App';
+// 1. Import the ThemeProvider you created
+import { ThemeProvider } from './context/ThemeContext'; 
 
-// If you have a main CSS file for bootstrap or custom styles, import it here
-// For example:
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import AppWrapper from './App';
 import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  // StrictMode helps find potential problems in an application.
   <React.StrictMode>
-    <AppWrapper />
+    {/* 2. Wrap the entire AppWrapper with the ThemeProvider */}
+    <ThemeProvider>
+      <AppWrapper />
+    </ThemeProvider>
   </React.StrictMode>
 );

@@ -1,11 +1,14 @@
 
 
+
+
+// // backend/routes/users.js (FINAL, WITH EMOTION SAVING)
+
 // const express = require('express');
 // const router = express.Router();
 // const User = require('../models/User');
 
-// // @route   GET /api/users/students
-// // @desc    Get all student users for the therapist dashboard
+// // GET /api/users/students (This route is fine and unchanged)
 // router.get('/students', async (req, res) => {
 //     try {
 //         const students = await User.find({ role: 'student' }).select('-password');
@@ -16,41 +19,27 @@
 //     }
 // });
 
-// // --- NEW ROUTE FOR STUDENT DETAIL PAGE ---
-// // @route   GET /api/users/:id
-// // @desc    Get a single student's data by their ID
+// // GET /api/users/:id (This route is fine and unchanged)
 // router.get('/:id', async (req, res) => {
 //     try {
 //         const student = await User.findById(req.params.id).select('-password');
-        
-//         if (!student) {
-//             return res.status(404).json({ msg: 'Student not found' });
-//         }
-//         // Ensure the student being requested is actually a student
-//         if (student.role !== 'student') {
-//             return res.status(403).json({ msg: 'User is not a student' });
-//         }
-
+//         if (!student) return res.status(404).json({ msg: 'Student not found' });
+//         if (student.role !== 'student') return res.status(403).json({ msg: 'User is not a student' });
 //         res.json(student);
-
 //     } catch (err) {
-//         // This handles cases where the ID format is invalid (e.g., not a valid MongoDB ObjectId)
-//         if (err.kind === 'ObjectId') {
-//             return res.status(404).json({ msg: 'Student not found' });
-//         }
+//         if (err.kind === 'ObjectId') return res.status(404).json({ msg: 'Student not found' });
 //         console.error(err.message);
 //         res.status(500).send('Server Error');
 //     }
 // });
-// --- END OF NEW ROUTE ---
 
-
-// @route   POST /api/users/update-progress
-// @desc    Update a user's score, performance, AND emotion data
+// // --- MODIFIED: This route now correctly receives and saves the emotion tally ---
 // router.post('/update-progress', async (req, res) => {
+//     const { userId, performance, score, quizLevel, emotionTally } = req.body;
 
-//     console.log("DEBUG: Backend received this data --->", req.body);
-//     const { userId, performance, score, emotion, quizLevel } = req.body;
+//     if (!userId || !performance || typeof score === 'undefined' || !quizLevel || !emotionTally) {
+//         return res.status(400).json({ msg: 'Missing required data for progress update.' });
+//     }
 
 //     try {
 //         const user = await User.findById(userId);
@@ -60,70 +49,71 @@
 
 //         user.performance = performance;
 //         user.score = score;
-        
-//         if (emotion && quizLevel && user.emotionData.get(quizLevel)) {
-//             const currentCount = user.emotionData.get(quizLevel).get(emotion) || 0;
-//             user.emotionData.get(quizLevel).set(emotion, currentCount + 1);
-//         }
-
-//         if (performance && performance.medium && performance.medium.total > 0) {
+//         if (performance?.medium?.total > 0) {
 //             user.isEvaluated = true;
 //         }
 
-//         const updatedUser = await user.save();
+//         // --- NEW LOGIC: Merge the new emotion counts into the database ---
+//         if (!user.emotionData) {
+//             user.emotionData = { easy: new Map(), medium: new Map(), hard: new Map() };
+//         }
+//         const levelEmotions = user.emotionData[quizLevel];
+//         if (levelEmotions) {
+//             for (const [emotion, count] of Object.entries(emotionTally)) {
+//                 const existingCount = levelEmotions.get(emotion) || 0;
+//                 levelEmotions.set(emotion, existingCount + count);
+//             }
+//         }
         
+//         const updatedUser = await user.save();
+
 //         const userToReturn = updatedUser.toObject();
 //         delete userToReturn.password;
-
 //         res.json(userToReturn);
 
 //     } catch (err) {
-//         console.error(err.message);
+//         console.error("CRITICAL ERROR in /update-progress:", err);
 //         res.status(500).send('Server Error');
 //     }
 // });
 
-// In back_end/routes/users.js, replace the existing '/update-progress' route with this one.
+// module.exports = router;
 
-// In back_end/routes/users.js, replace the whole function
 
-// In back_end/routes/users.js, replace the whole function
-
-// back_end/routes/users.js (Definitive Final Version)
+// backend/routes/users.js (FINAL - OVERWRITE EMOTIONS)
 
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
-// GET /api/users/students (This route is fine)
+// GET /api/users/students (This route is fine and unchanged)
 router.get('/students', async (req, res) => {
     try {
         const students = await User.find({ role: 'student' }).select('-password');
         res.json(students);
     } catch (err) {
-        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
 
-// GET /api/users/:id (This route is fine)
+// GET /api/users/:id (This route is fine and unchanged)
 router.get('/:id', async (req, res) => {
     try {
         const student = await User.findById(req.params.id).select('-password');
         if (!student) return res.status(404).json({ msg: 'Student not found' });
-        if (student.role !== 'student') return res.status(403).json({ msg: 'User is not a student' });
         res.json(student);
     } catch (err) {
-        if (err.kind === 'ObjectId') return res.status(404).json({ msg: 'Student not found' });
-        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
 
-
-// POST /api/users/update-progress (This logic is now simpler and safer)
+// --- MODIFIED: This route now OVERWRITES the emotion data ---
 router.post('/update-progress', async (req, res) => {
-    const { userId, performance, score, emotion, quizLevel } = req.body;
+    const { userId, performance, score, quizLevel, emotionTally } = req.body;
+
+    if (!userId || !performance || typeof score === 'undefined' || !quizLevel || !emotionTally) {
+        return res.status(400).json({ msg: 'Missing required data.' });
+    }
 
     try {
         const user = await User.findById(userId);
@@ -131,19 +121,27 @@ router.post('/update-progress', async (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        // Update standard fields
-        user.performance = performance;
-        user.score = score;
+        // --- THE KEY CHANGE IS HERE ---
+        // Instead of merging, we will replace the data for the specific quiz level
+        // This ensures the pie chart only shows the most recent attempt.
+        user.performance[quizLevel] = performance[quizLevel];
+        user.emotionData[quizLevel] = emotionTally;
         
-        // Update emotion data - this is now safe because the model guarantees the fields exist
-        if (emotion && quizLevel && user.emotionData && user.emotionData[quizLevel]) {
-            const currentCount = user.emotionData[quizLevel].get(emotion) || 0;
-            user.emotionData[quizLevel].set(emotion, currentCount + 1);
-        }
+        // We still need to recalculate the total score
+        let totalScore = 0;
+        if (user.performance.easy) totalScore += user.performance.easy.correct * 10;
+        if (user.performance.medium) totalScore += user.performance.medium.correct * 10;
+        if (user.performance.hard) totalScore += user.performance.hard.correct * 10;
+        user.score = totalScore;
         
+        // Set evaluation status
         if (performance?.medium?.total > 0) {
             user.isEvaluated = true;
         }
+
+        // This ensures Mongoose knows that the nested object has changed
+        user.markModified('performance');
+        user.markModified('emotionData');
 
         const updatedUser = await user.save();
         
@@ -156,6 +154,5 @@ router.post('/update-progress', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
-
 
 module.exports = router;
