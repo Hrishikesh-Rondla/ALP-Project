@@ -105,38 +105,99 @@
 
 // backend/stats/dashboard.js (SIMPLIFIED)
 
+// const express = require('express');
+// const router = express.Router();
+// const User = require('../models/User');
+
+// router.get('/', async (req, res) => {
+//     try {
+//         const students = await User.find({ role: 'student' }).select('-password');
+
+//         const topPerformers = [...students].sort((a, b) => b.score - a.score).slice(0, 3);
+
+//         const studentsWithAverages = students
+//             .map(student => {
+//                 const perf = student.performance;
+//                 let totalCorrect = 0;
+//                 let totalQuestions = 0;
+//                 if (perf.easy) { totalCorrect += perf.easy.correct; totalQuestions += perf.easy.total; }
+//                 if (perf.medium) { totalCorrect += perf.medium.correct; totalQuestions += perf.medium.total; }
+//                 if (perf.hard) { totalCorrect += perf.hard.correct; totalQuestions += perf.hard.total; }
+//                 const average = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : -1;
+//                 return { ...student.toObject(), average };
+//             })
+//             .filter(student => student.average !== -1);
+
+//         const studentsForReview = studentsWithAverages.sort((a, b) => a.average - b.average).slice(0, 3);
+            
+//         res.json({
+//             topPerformers,
+//             studentsForReview,
+//             totalStudentCount: students.length
+//         });
+
+//     } catch (err) {
+//         res.status(500).send('Server Error');
+//     }
+// });
+
+// module.exports = router;
+
+
+// backend/stats/dashboard.js (DEFINITIVE, WORKING VERSION)
+
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
+// @route   GET /api/stats/dashboard
+// @desc    Get dashboard stats like student count, top performers, and students for review
 router.get('/', async (req, res) => {
     try {
+        // Fetch all students from the database, excluding their passwords
         const students = await User.find({ role: 'student' }).select('-password');
 
-        const topPerformers = [...students].sort((a, b) => b.score - a.score).slice(0, 3);
+        // 1. Get Total Student Count
+        const totalStudentCount = students.length;
 
+        // 2. Get Top 3 Performers (sorted by highest score)
+        const topPerformers = [...students] // Create a copy to avoid modifying the original array
+            .sort((a, b) => b.score - a.score) // Sort in descending order of score
+            .slice(0, 3); // Take only the first 3
+
+        // 3. Get 3 Students Needing Attention (sorted by lowest average performance)
         const studentsWithAverages = students
             .map(student => {
                 const perf = student.performance;
                 let totalCorrect = 0;
                 let totalQuestions = 0;
-                if (perf.easy) { totalCorrect += perf.easy.correct; totalQuestions += perf.easy.total; }
-                if (perf.medium) { totalCorrect += perf.medium.correct; totalQuestions += perf.medium.total; }
-                if (perf.hard) { totalCorrect += perf.hard.correct; totalQuestions += perf.hard.total; }
+
+                // Sum up scores from all quiz levels
+                if (perf.easy && perf.easy.total > 0) { totalCorrect += perf.easy.correct; totalQuestions += perf.easy.total; }
+                if (perf.medium && perf.medium.total > 0) { totalCorrect += perf.medium.correct; totalQuestions += perf.medium.total; }
+                if (perf.hard && perf.hard.total > 0) { totalCorrect += perf.hard.correct; totalQuestions += perf.hard.total; }
+
+                // Calculate average, handle case where student has not attempted any quizzes to avoid division by zero
                 const average = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : -1;
+
+                // Return a new object with the student data and their calculated average
                 return { ...student.toObject(), average };
             })
-            .filter(student => student.average !== -1);
+            .filter(student => student.average !== -1); // Filter out students who haven't played
 
-        const studentsForReview = studentsWithAverages.sort((a, b) => a.average - b.average).slice(0, 3);
-            
+        const studentsForReview = studentsWithAverages
+            .sort((a, b) => a.average - b.average) // Sort in ascending order of average score
+            .slice(0, 3); // Take only the first 3 (the lowest scores)
+
+        // Send all the calculated stats back to the front-end in a single JSON object
         res.json({
+            totalStudentCount,
             topPerformers,
-            studentsForReview,
-            totalStudentCount: students.length
+            studentsForReview
         });
 
     } catch (err) {
+        console.error("Error in dashboard stats route:", err.message);
         res.status(500).send('Server Error');
     }
 });
