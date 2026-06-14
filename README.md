@@ -1,30 +1,43 @@
 # ALP-Project
-In today's rapidly evolving educational landscape, personalized learning approaches are the way to go, especially for children with learning difficulties. Traditional educational methods often fall short in addressing the diverse needs of such learners, leading to disengagement and limited progress. With advancements in artificial intelligence and deep learning, particularly in transformer-based models, there is an opportunity to create intelligent systems that can better understand and respond to a child's unique emotional and behavioral cues. ALP (Adaptive Learning Path) is an adaptive educational platform that uses transformer-based models to analyze facial expressions and gameplay behaviors of children with learning difficulties. This system will dynamically adapt the learning path of the child following challenges and feedback based on the detected emotional states promoting sustained engagement and improved learning outcomes. While the system adjusts the learning path in real-time, it will always prioritize and adhere to the therapists recommended path, ensuring that the adaptive process remains aligned with professional therapeutic goals.
+
 In today's rapidly evolving educational landscape, personalized learning approaches are the way to go, especially for children with learning difficulties. Traditional educational methods often fall short in addressing the diverse needs of such learners, leading to disengagement and limited progress. With advancements in artificial intelligence and deep learning, particularly in transformer-based models, there is an opportunity to create intelligent systems that can better understand and respond to a child's unique emotional and behavioral cues.
+
 **ALP (Adaptive Learning Path)** is an adaptive educational platform that uses transformer-based models to analyze facial expressions and gameplay behaviors of children with learning difficulties. This system dynamically adapts the learning path of the child following challenges and feedback based on the detected emotional states, promoting sustained engagement and improved learning outcomes. While the system adjusts the learning path in real-time, it will always prioritize and adhere to the therapist's recommended path, ensuring that the adaptive process remains aligned with professional therapeutic goals.
+
 ---
+
 ## 🏛️ Project Architecture
+
 The project consists of three main components:
+
 1. **Frontend (`front_end/my-app`)**: A React application that provides the user interface for students, teachers, therapists, and administrators. It captures facial landmarks using MediaPipe and sends them to the ML service.
 2. **Backend (`back_end`)**: An Express/Node.js server handling user authentication, quiz data, user progress, and dashboard analytics. It interacts with MongoDB.
 3. **ML Service (`Real_ML_Service`)**: A Flask web service running a PyTorch-based Face Emotion Transformer model to classify emotions from facial landmarks in real-time.
+
 ---
+
 ## 🚀 Getting Started & Startup Workflow
+
 Follow these steps to get the application cloned, configured, and running locally.
+
 ### 📋 Prerequisites
 Make sure you have the following installed on your machine:
 - [Git](https://git-scm.com/)
 - [Node.js](https://nodejs.org/) (v16+ recommended)
 - [Python 3.8+](https://www.python.org/)
 - [MongoDB](https://www.mongodb.com/) (Local instance or MongoDB Atlas URI)
+
 ---
+
 ### Step 1: Clone the Repository
 Clone the repository from GitHub and navigate into the project directory:
 ```bash
 git clone https://github.com/YOUR_GITHUB_USERNAME/ALP-Project.git
 cd ALP-Project
 ```
+
 ---
+
 ### Step 2: Set Up and Run the Backend
 1. Navigate to the backend directory:
    ```bash
@@ -47,7 +60,16 @@ cd ALP-Project
    node server.js
    ```
    *The backend will run on [http://localhost:5000](http://localhost:5000).*
+5. **Verify Database Connection**:
+   Once started, check the console output. It should output:
+   ```
+   Backend server is running on http://localhost:5000
+   MongoDB connected successfully.
+   ```
+   *If you encounter a connection error, make sure your `.env` contains the correct `MONGO_URI` and that your local/Atlas database is active and accessible.*
+
 ---
+
 ### Step 3: Set Up and Run the Machine Learning Service
 1. Open a new terminal window/tab, navigate to the `Real_ML_Service` directory:
    ```bash
@@ -78,7 +100,9 @@ cd ALP-Project
    python app.py
    ```
    *The ML service will run on [http://localhost:8000](http://localhost:8000).*
+
 ---
+
 ### Step 4: Set Up and Run the Frontend React Application
 1. Open another terminal window/tab, navigate to the frontend directory:
    ```bash
@@ -93,46 +117,13 @@ cd ALP-Project
    npm start
    ```
    *The frontend will compile and open automatically on [http://localhost:3000](http://localhost:3000).*
+
 ---
+
 ## 🚦 Port & URL reference
-|
- Service 
-|
- Address 
-|
- Description 
-|
-|
-:---
-|
-:---
-|
-:---
-|
-|
-**
-Frontend
-**
-|
-`http://localhost:3000`
-|
- User portal, quizzes & dashboard UI 
-|
-|
-**
-Backend API
-**
-|
-`http://localhost:5000`
-|
- Express REST API & Database controller 
-|
-|
-**
-ML Service
-**
-|
-`http://localhost:8000`
-|
- Flask / PyTorch face landmark classification 
-|
+
+| Service | Address | Description |
+| :--- | :--- | :--- |
+| **Frontend** | `http://localhost:3000` | User portal, quizzes & dashboard UI |
+| **Backend API** | `http://localhost:5000` | Express REST API & Database controller |
+| **ML Service** | `http://localhost:8000` | Flask / PyTorch face landmark classification |
