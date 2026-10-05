@@ -26,7 +26,6 @@ Make sure you have the following installed on your machine:
 - [Node.js](https://nodejs.org/) (v16+ recommended)
 - [Python 3.8+](https://www.python.org/)
 - [MongoDB](https://www.mongodb.com/) (Local instance or MongoDB Atlas URI)
-
 ---
 
 ### Step 1: Clone the Repository
